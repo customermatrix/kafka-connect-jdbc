@@ -212,6 +212,8 @@ public class JdbcUtils {
       query = "select CURRENT_TIMESTAMP from dual";
     else if ("Apache Derby".equals(dbProduct))
       query = "values(CURRENT_TIMESTAMP)";
+    else if ("PostgreSQL".equals(dbProduct))
+      query = "select SYSDATE";
     else
       query = "select CURRENT_TIMESTAMP;";
 
