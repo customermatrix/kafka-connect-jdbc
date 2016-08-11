@@ -62,8 +62,8 @@ public class TimestampIncrementingTableQuerier extends TableQuerier {
 
   public TimestampIncrementingTableQuerier(QueryMode mode, String name, String topicPrefix,
                                            String timestampColumn, String incrementingColumn,
-                                           Map<String, Object> offsetMap, Long timestampDelay, String schemaPattern) {
-    super(mode, name, topicPrefix, schemaPattern);
+                                           Map<String, Object> offsetMap, Long timestampDelay, String schemaPattern, int fetchSize) {
+    super(mode, name, topicPrefix, schemaPattern, fetchSize);
     this.timestampColumn = timestampColumn;
     this.incrementingColumn = incrementingColumn;
     this.timestampDelay = timestampDelay;

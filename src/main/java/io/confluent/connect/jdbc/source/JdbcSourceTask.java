@@ -120,6 +120,8 @@ public class JdbcSourceTask extends SourceTask {
 
     String schemaPattern
         = config.getString(JdbcSourceTaskConfig.SCHEMA_PATTERN_CONFIG);
+    int fetchSize
+        = config.getInt(JdbcSourceTaskConfig.JDBC_FETCH_SIZE_CONFIG);
     String incrementingColumn
         = config.getString(JdbcSourceTaskConfig.INCREMENTING_COLUMN_NAME_CONFIG);
     String timestampColumn
@@ -151,16 +153,16 @@ public class JdbcSourceTask extends SourceTask {
       String topicPrefix = config.getString(JdbcSourceTaskConfig.TOPIC_PREFIX_CONFIG);
 
       if (mode.equals(JdbcSourceTaskConfig.MODE_BULK)) {
-        tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern, topicPrefix));
+        tableQueue.add(new BulkTableQuerier(queryMode, tableOrQuery, schemaPattern, topicPrefix, fetchSize));
       } else if (mode.equals(JdbcSourceTaskConfig.MODE_INCREMENTING)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, offset, timestampDelayInterval, schemaPattern));
+            queryMode, tableOrQuery, topicPrefix, null, incrementingColumn, offset, timestampDelayInterval, schemaPattern, fetchSize));
       } else if (mode.equals(JdbcSourceTaskConfig.MODE_TIMESTAMP)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, timestampColumn, null, offset, timestampDelayInterval, schemaPattern));
+            queryMode, tableOrQuery, topicPrefix, timestampColumn, null, offset, timestampDelayInterval, schemaPattern, fetchSize));
       } else if (mode.endsWith(JdbcSourceTaskConfig.MODE_TIMESTAMP_INCREMENTING)) {
         tableQueue.add(new TimestampIncrementingTableQuerier(
-            queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn, offset, timestampDelayInterval, schemaPattern));
+            queryMode, tableOrQuery, topicPrefix, timestampColumn, incrementingColumn, offset, timestampDelayInterval, schemaPattern, fetchSize));
       }
     }
 

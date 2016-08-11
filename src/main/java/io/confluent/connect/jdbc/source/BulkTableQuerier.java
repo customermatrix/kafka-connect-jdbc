@@ -35,8 +35,8 @@ import java.util.Map;
 public class BulkTableQuerier extends TableQuerier {
   private static final Logger log = LoggerFactory.getLogger(BulkTableQuerier.class);
 
-  public BulkTableQuerier(QueryMode mode, String name, String schemaPattern, String topicPrefix) {
-    super(mode, name, topicPrefix, schemaPattern);
+  public BulkTableQuerier(QueryMode mode, String name, String schemaPattern, String topicPrefix, int fetchSize) {
+    super(mode, name, topicPrefix, schemaPattern, fetchSize);
   }
 
   @Override

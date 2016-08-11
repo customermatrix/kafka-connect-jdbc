@@ -44,10 +44,12 @@ abstract class TableQuerier implements Comparable<TableQuerier> {
   protected PreparedStatement stmt;
   protected ResultSet resultSet;
   protected Schema schema;
+  private int fetchSize;
 
-  public TableQuerier(QueryMode mode, String nameOrQuery, String topicPrefix, String schemaPattern) {
+  public TableQuerier(QueryMode mode, String nameOrQuery, String topicPrefix, String schemaPattern, int fetchSize) {
     this.mode = mode;
     this.schemaPattern = schemaPattern;
+    this.fetchSize = fetchSize;
     this.name = mode.equals(QueryMode.TABLE) ? nameOrQuery : null;
     this.query = mode.equals(QueryMode.QUERY) ? nameOrQuery : null;
     this.topicPrefix = topicPrefix;
@@ -63,6 +65,7 @@ abstract class TableQuerier implements Comparable<TableQuerier> {
       return stmt;
     }
     createPreparedStatement(db);
+    stmt.setFetchSize(fetchSize);
     return stmt;
   }
 

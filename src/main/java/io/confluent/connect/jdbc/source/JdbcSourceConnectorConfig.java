@@ -49,6 +49,12 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
   private static final String BATCH_MAX_ROWS_DOC =
       "Maximum number of rows to include in a single batch when polling for new data. This "
       + "setting can be used to limit the amount of data buffered internally in the connector.";
+
+  public static final String JDBC_FETCH_SIZE_CONFIG = "jdbc.fetch.size";
+  public static final int JDBC_FETCH_SIZE_DEFAULT = 100;
+  private static final String JDBC_FETCH_SIZE_DOC =
+      "Fetch size for jdbc statements";
+
   public static final int BATCH_MAX_ROWS_DEFAULT = 100;
   private static final String BATCH_MAX_ROWS_DISPLAY = "Max Rows Per Batch";
 
@@ -193,6 +199,7 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
         .define(TABLE_POLL_INTERVAL_MS_CONFIG, Type.LONG, TABLE_POLL_INTERVAL_MS_DEFAULT, Importance.LOW, TABLE_POLL_INTERVAL_MS_DOC, CONNECTOR_GROUP, 3, Width.SHORT, TABLE_POLL_INTERVAL_MS_DISPLAY)
         .define(TOPIC_PREFIX_CONFIG, Type.STRING, Importance.HIGH, TOPIC_PREFIX_DOC, CONNECTOR_GROUP, 4, Width.MEDIUM, TOPIC_PREFIX_DISPLAY)
         .define(SCHEMA_PATTERN_CONFIG, Type.STRING, null, Importance.MEDIUM, SCHEMA_PATTERN_DOC, DATABASE_GROUP, 5, Width.SHORT, QUERY_DISPLAY)
+        .define(JDBC_FETCH_SIZE_CONFIG, Type.INT, JDBC_FETCH_SIZE_DEFAULT, Importance.MEDIUM, JDBC_FETCH_SIZE_DOC, DATABASE_GROUP, 6, Width.SHORT, QUERY_DISPLAY)
         .define(TIMESTAMP_DELAY_INTERVAL_MS_CONFIG, Type.LONG, TIMESTAMP_DELAY_INTERVAL_MS_DEFAULT, Importance.HIGH, TIMESTAMP_DELAY_INTERVAL_MS_DOC, CONNECTOR_GROUP, 5, Width.MEDIUM, TIMESTAMP_DELAY_INTERVAL_MS_DISPLAY);
   }
 
@@ -217,6 +224,8 @@ public class JdbcSourceConnectorConfig extends AbstractConfig {
       Connection db;
       try {
         db = DriverManager.getConnection(dbUrl);
+        db.setAutoCommit(false);
+        db.setReadOnly(true);
         return new LinkedList<Object>(JdbcUtils.getTables(db, schemaPattern));
       } catch (SQLException e) {
         throw new ConfigException("Couldn't open connection to " + dbUrl, e);
