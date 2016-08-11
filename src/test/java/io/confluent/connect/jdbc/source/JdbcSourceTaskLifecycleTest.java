@@ -61,6 +61,10 @@ public class JdbcSourceTaskLifecycleTest extends JdbcSourceTaskTestBase {
     Connection conn = PowerMock.createMock(Connection.class);
     EasyMock.expect(DriverManager.getConnection(db.getUrl()))
         .andReturn(conn);
+    conn.setAutoCommit(false);
+    PowerMock.expectLastCall();
+    conn.setReadOnly(true);
+    PowerMock.expectLastCall();
     conn.close();
     PowerMock.expectLastCall();
 

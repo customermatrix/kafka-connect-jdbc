@@ -16,6 +16,10 @@
 
 package io.confluent.connect.jdbc;
 
+import io.confluent.connect.jdbc.source.EmbeddedDerby;
+import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
+import io.confluent.connect.jdbc.source.JdbcSourceTask;
+import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 import org.apache.kafka.connect.errors.ConnectException;
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -34,11 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import io.confluent.connect.jdbc.source.EmbeddedDerby;
-import io.confluent.connect.jdbc.source.JdbcSourceConnectorConfig;
-import io.confluent.connect.jdbc.source.JdbcSourceTask;
-import io.confluent.connect.jdbc.source.JdbcSourceTaskConfig;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -101,6 +100,10 @@ public class JdbcSourceConnectorTest {
     Connection conn = PowerMock.createMock(Connection.class);
     EasyMock.expect(DriverManager.getConnection(db.getUrl()))
         .andReturn(conn);
+    conn.setReadOnly(true);
+    EasyMock.expectLastCall();
+    conn.setAutoCommit(false);
+    EasyMock.expectLastCall();
     // Since we're just testing start/stop, we don't worry about the value here but need to stub
     // something since the background thread will be started and try to lookup metadata.
     EasyMock.expect(conn.getMetaData()).andStubThrow(new SQLException());
